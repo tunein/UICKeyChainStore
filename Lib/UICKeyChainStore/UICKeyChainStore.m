@@ -577,7 +577,13 @@ static NSString *_defaultService;
             } else {
                 status = SecItemUpdate((__bridge CFDictionaryRef)query, (__bridge CFDictionaryRef)attributes);
             }
-            if (status != errSecSuccess) {
+            if (status == errSecDuplicateItem) {
+                // Duplicate items exist, meaning one synchronizable and one not. Remove them and try again.
+                if ([self removeItemForKey:key error:error]) {
+                    // Success remove, try to set again
+                    return [self setData:data forKey:key label:label comment:comment error:error];
+                }
+            } else if (status != errSecSuccess) {
                 NSError *e = [self.class securityError:status];
                 if (error) {
                     *error = e;
