@@ -548,6 +548,8 @@ static NSString *_defaultService;
     if (status == errSecSuccess || status == errSecInteractionNotAllowed) {
         query = [self query];
         query[(__bridge __strong id)kSecAttrAccount] = key;
+
+        query[(__bridge __strong id)kSecAttrSynchronizable] = @(_synchronizable);
         
         NSError *unexpectedError = nil;
         NSMutableDictionary *attributes = [self attributesWithKey:nil value:data error:&unexpectedError];
